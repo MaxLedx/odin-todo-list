@@ -1,43 +1,44 @@
-// import { ProjectController } from './controllers/projectController';
-// import { InMemoryStorage } from './infrastructure/inMemoryStorage';
-// import { PersistentStorage } from './infrastructure/persistentStorage';
-// import { StorageService } from './services/storageService';
-// import './style.css';
-// import { Renderer } from './views/renderer';
-// import { showNewProjectModal } from './views/showNewProjectModal';
-
 import { DateTime } from "luxon";
 import { Project } from "./models/project";
 import { Todo } from "./models/todo";
 import { readFromLocalStorage, writeToLocalStorage } from "./services/localStorageService";
+import { Memory } from "./services/inMemoryStorageService";
 
-// localStorage.clear();
-// const persistentStorage = new PersistentStorage('projects', localStorage);
-// const inMemoryStorage = new InMemoryStorage([]);
-// const storageService = new StorageService(inMemoryStorage, persistentStorage);
-// const renderer = new Renderer(inMemoryStorage);
-// const projectController = new ProjectController(storageService, renderer);
 
-// const addProjectButton = document.querySelector('#add-project-button');
-// addProjectButton.addEventListener('click', () => showNewProjectModal((val) => {
-//     projectController.addProject(val);
-// }));
+const memory = initializeMemory();
+console.log(memory);
 
-const project = new Project({ title: "Test", description: "Test", color: "#FFFFFF" });
-const todo = new Todo({
-    title: "T",
-    description: "T",
-    dueDate: DateTime.now(),
-    priority: "low",
-});
-const todo1 = new Todo({
-    title: "T",
-    description: "T",
-    dueDate: DateTime.now(),
-    priority: "low",
-});
-project.todos.push(todo);
-project.todos.push(todo1);
-writeToLocalStorage([project]);
-const back = readFromLocalStorage();
-console.log(back);
+function initializeMemory() {
+    const projects = readFromLocalStorage();
+    if (projects.length === 0) {
+        projects.push(createDefaultProject());
+    }
+    const memory = new Memory({ onWrite: (projects) => writeToLocalStorage(projects) });
+    for (const project of projects) {
+        memory.addProject(project);
+    }
+    return memory;
+}
+
+function createDefaultProject() {
+    const project = new Project({
+        title: 'Default',
+        description: 'This the default project to showcase the app',
+        color: "#ffffff"
+    });
+    const todoO = new Todo({
+        title: 'Pay the bills',
+        description: 'You gotta do what you gotta do',
+        dueDate: DateTime.now().plus({ days: 2 }),
+        priority: 'high',
+    });
+    const todo1 = new Todo({
+        title: 'Read Think Like A Programmer',
+        description: 'This is a book. It is meant to be read. What is reading ?',
+        dueDate: DateTime.now().plus({ months: 1 }),
+        priority: 'medium',
+    });
+    project.todos.push(todoO);
+    project.todos.push(todo1);
+    return project;
+}
