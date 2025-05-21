@@ -25,6 +25,11 @@ export class StorageService {
         this.#persistData();
     }
 
+    addTodo(projectId, todo) {
+        this.#inMemoryStorage.addTodo(projectId, todo);
+        this.#persistData();
+    }
+
     deleteProject(id) {
         this.#inMemoryStorage.deleteProject(id);
         this.#persistData();
