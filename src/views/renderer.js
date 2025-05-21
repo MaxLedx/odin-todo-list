@@ -1,14 +1,23 @@
-import { InMemoryStorage } from "../services/inMemoryStorage";
+import { ProjectController } from "../controllers/projectController";
+import { InMemoryStorage } from "../infrastructure/inMemoryStorage";
 
 export class Renderer {
     #inMemoryStorage;
-
+    #controller;
     /**
      * 
      * @param {InMemoryStorage} inMemoryStorage 
      */
     constructor(inMemoryStorage) {
         this.#inMemoryStorage = inMemoryStorage;
+    }
+
+    /**
+     * 
+     * @param {ProjectController} controller 
+     */
+    setController(controller) {
+        this.#controller = controller;
     }
 
     render() {
@@ -20,5 +29,7 @@ export class Renderer {
             projectElement.textContent = project.title;
             sideBar.appendChild(projectElement);
         }
+
+        this.#controller.test();
     }
 }

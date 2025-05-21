@@ -11,7 +11,7 @@ export class InMemoryStorage {
         this.#projects = projects;
     }
 
-    addProject(project) {
+    saveProject(project) {
         this.#projects.push(project);
     }
 

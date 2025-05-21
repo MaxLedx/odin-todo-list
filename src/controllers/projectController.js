@@ -1,24 +1,29 @@
 import { Project } from "../models/project";
-import { InMemoryStorage } from "../services/inMemoryStorage";
-import { PersistentStorage } from "../services/persistentStorage";
+import { StorageService } from "../services/storageService";
+import { Renderer } from "../views/renderer";
 
 export class ProjectController {
-    #inMemoryStorage;
-    #persistentStorage;
+    #storageService;
+    #renderer;
 
     /**
      * 
-     * @param {InMemoryStorage} inMemoryStorage 
-     * @param {PersistentStorage} persistentStorage 
+     * @param {StorageService} storageService 
+     * @param {Renderer} renderer 
      */
-    constructor(inMemoryStorage, persistentStorage) {
-        this.#inMemoryStorage = inMemoryStorage;
-        this.#persistentStorage = persistentStorage;
+    constructor(storageService, renderer) {
+        this.#storageService = storageService;
+        this.#renderer = renderer;
+        this.#renderer.setController(this);
     }
 
     addProject({ title, description, color }) {
         const project = new Project({ title, description, color });
-        this.#inMemoryStorage.addProject(project);
-        this.#persistentStorage.save(this.#inMemoryStorage.getAllProjects());
+        this.#storageService.saveProject(project);
+        this.#renderer.render();
+    }
+
+    test() {
+        console.log('NOICE');
     }
 }
