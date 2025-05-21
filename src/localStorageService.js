@@ -1,11 +1,11 @@
-import { Project } from "../models/project";
-import { Todo } from "../models/todo";
+import { Project } from "./project";
+import { Todo } from "./todo";
 
 const KEY = 'projects';
 
 /**
  * 
- * @param {Project[]} projects
+ * @param {Project[]} projects 
  */
 export function writeToLocalStorage(projects) {
     localStorage.setItem(KEY, JSON.stringify(projects));

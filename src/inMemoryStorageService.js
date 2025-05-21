@@ -9,7 +9,6 @@ export class Memory {
         this.onWrite(this.projects);
     }
 
-
     addTodo(projectId, todo) {
         const project = this.projects.find(project => project.id === projectId);
         if (project !== undefined) {
