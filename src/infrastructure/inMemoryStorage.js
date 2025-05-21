@@ -15,6 +15,10 @@ export class InMemoryStorage {
         this.#projects.push(project);
     }
 
+    deleteProject(id) {
+        this.#projects = this.#projects.filter(project => project.id !== id);
+    }
+
     getAllProjects() {
         return this.#projects;
     }

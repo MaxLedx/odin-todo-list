@@ -28,12 +28,14 @@ export class Renderer {
         }
 
         const projects = this.#inMemoryStorage.getAllProjects();
+
         for (const project of projects) {
             const projectElement = document.createElement('div');
+            projectElement.addEventListener('click', () => {
+                this.#controller.deleteProject(project.id);
+            })
             projectElement.textContent = project.title;
             projectsElement.appendChild(projectElement);
         }
-
-        this.#controller.test();
     }
 }

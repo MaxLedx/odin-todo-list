@@ -25,6 +25,11 @@ export class StorageService {
         this.#persistData();
     }
 
+    deleteProject(id) {
+        this.#inMemoryStorage.deleteProject(id);
+        this.#persistData();
+    }
+
     #persistData() {
         this.#persistentStorage.save(this.#inMemoryStorage.getAllProjects());
     }

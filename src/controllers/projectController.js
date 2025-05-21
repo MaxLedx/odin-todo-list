@@ -23,7 +23,8 @@ export class ProjectController {
         this.#renderer.render();
     }
 
-    test() {
-        console.log('NOICE');
+    deleteProject(id) {
+        this.#storageService.deleteProject(id);
+        this.#renderer.render();
     }
 }
