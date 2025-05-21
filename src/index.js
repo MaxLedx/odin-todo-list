@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 import { Project } from "./project";
 import { Todo } from "./todo";
 import { readFromLocalStorage, writeToLocalStorage } from "./localStorageService";
-import { Memory } from "./inMemoryStorageService";
+import { Memory } from "./memory";
 
 const memory = initializeMemory();
 console.log(memory);
