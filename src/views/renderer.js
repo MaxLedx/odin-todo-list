@@ -21,13 +21,17 @@ export class Renderer {
     }
 
     render() {
-        const sideBar = document.querySelector('#sidebar');
+        const projectsElement = document.querySelector('#projects');
+
+        while (projectsElement.firstChild) {
+            projectsElement.removeChild(projectsElement.lastChild);
+        }
 
         const projects = this.#inMemoryStorage.getAllProjects();
         for (const project of projects) {
             const projectElement = document.createElement('div');
             projectElement.textContent = project.title;
-            sideBar.appendChild(projectElement);
+            projectsElement.appendChild(projectElement);
         }
 
         this.#controller.test();
