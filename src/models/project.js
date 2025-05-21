@@ -1,19 +1,17 @@
-import { Todo } from "./todo";
-
 export class Project {
-    constructor({ title, description, color }) {
-        this.id = crypto.randomUUID();
+    constructor(
+        {
+            title,
+            description,
+            color,
+            id = crypto.randomUUID(),
+            todos = []
+        }
+    ) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.color = color;
-        this.todos = [];
-    }
-
-    /**
-     * 
-     * @param {Todo} todo 
-     */
-    addTodo(todo) {
-        this.todos.push(todo);
+        this.todos = todos;
     }
 }
