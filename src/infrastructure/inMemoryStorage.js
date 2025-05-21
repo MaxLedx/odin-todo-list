@@ -23,6 +23,13 @@ export class InMemoryStorage {
         }
     }
 
+    deleteTodo(projectId, todoId) {
+        const project = this.#projects.find(project => project.id === projectId);
+        if (project !== undefined) {
+            project.todos = project.todos.filter(todo => todo.id !== todoId);
+        }
+    }
+
     deleteProject(id) {
         this.#projects = this.#projects.filter(project => project.id !== id);
     }

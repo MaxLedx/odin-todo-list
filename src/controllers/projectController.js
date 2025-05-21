@@ -30,6 +30,11 @@ export class ProjectController {
         this.#renderer.render();
     }
 
+    deleteTodo(projectId, todoId) {
+        this.#storageService.deleteTodo(projectId, todoId);
+        this.#renderer.render();
+    }
+
     deleteProject(id) {
         this.#storageService.deleteProject(id);
         this.#renderer.render();
