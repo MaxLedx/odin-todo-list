@@ -4,11 +4,6 @@ export class Memory {
         this.onWrite = onWrite;
     }
 
-    addProject(project) {
-        this.projects.push(project);
-        this.onWrite(this.projects);
-    }
-
     addTodo(projectId, todo) {
         const project = this.projects.find(project => project.id === projectId);
         if (project !== undefined) {
@@ -23,6 +18,11 @@ export class Memory {
             project.todos = project.todos.filter(todo => todo.id !== todoId);
             this.onWrite(this.projects);
         }
+    }
+
+    addProject(project) {
+        this.projects.push(project);
+        this.onWrite(this.projects);
     }
 
     deleteProject(id) {
