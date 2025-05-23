@@ -4,11 +4,11 @@ import { Project } from "./project";
 import { Todo } from "./todo";
 import { readFromLocalStorage, writeToLocalStorage } from "./localStorageService";
 import { Memory } from "./memory";
+import { renderProjects } from "./renderer";
 
 const memory = initializeMemory();
-// Template affichage 'statique'
-// Renderer: crée l'UI en JS et attache les events et leurs handlers
-// Quand on clique sur un projet, remplace la liste des todos parÒ
+// Afficher les projets en mémoire dans la sidebar
+renderProjects(memory);
 console.log(memory);
 
 function initializeMemory() {
