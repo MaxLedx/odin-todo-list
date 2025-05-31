@@ -1,3 +1,6 @@
+import { readFromLocalStorage, writeToLocalStorage } from "./localStorageService";
+import { createSeedData } from "./seeder";
+
 export class Memory {
     constructor({ onWrite }) {
         this.projects = [];
@@ -44,4 +47,20 @@ export class Memory {
     getAllProjects() {
         return this.projects;
     }
+}
+
+export function initializeMemory() {
+    const projects = readFromLocalStorage();
+
+    if (projects.length === 0) {
+        projects.push(createSeedData());
+    }
+
+    const memory = new Memory({ onWrite: (projects) => writeToLocalStorage(projects) });
+
+    for (const project of projects) {
+        memory.addProject(project);
+    }
+
+    return memory;
 }
