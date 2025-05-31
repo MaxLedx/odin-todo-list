@@ -23,7 +23,6 @@ document.querySelector('#projects-add').addEventListener('click', () => {
     });
 });
 renderProjects(memory);
-console.log(memory);
 
 function initializeMemory() {
     const projects = readFromLocalStorage();

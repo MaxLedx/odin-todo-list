@@ -1,4 +1,7 @@
+import { DateTime } from "luxon";
 import { Memory } from "./memory";
+import { showNewTodoModal } from "./newTodoModal";
+import { Todo } from "./todo";
 
 /**
  * 
@@ -11,15 +14,34 @@ export function renderProjects(memory) {
     const projectDescription = document.querySelector('#project-description');
     const todos = document.querySelector('#project-todos-list');
     for (const project of memory.projects) {
+        console.log(project);
         const projectElement = document.createElement('div');
 
         projectElement.textContent = project.title;
 
         projectElement.addEventListener('click', () => {
+            console.log('in setp')
             removeAllChildren(todos);
             projectTitle.textContent = project.title;
             projectDescription.textContent = project.description;
+            const addTodoButton = document.createElement('button');
+            addTodoButton.textContent = 'Add Todo';
+            addTodoButton.addEventListener('click', () => {
+                showNewTodoModal((data) => {
+                    const todo = new Todo({
+                        title: data.title,
+                        description: data.description,
+                        dueDate: DateTime.fromFormat(data.dueDate, 'yyyy-MM-dd'),
+                        priority: data.priority
+                    });
+                    memory.addTodo(project.id, todo);
+                    renderProjects(memory);
+                    projectElement.click();
+                });
+            });
+            todos.appendChild(addTodoButton);
             for (const todo of project.todos) {
+                console.log(todo);
                 const todoElement = document.createElement('div');
                 const checkBox = document.createElement('input');
                 checkBox.setAttribute('type', 'checkbox');
