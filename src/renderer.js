@@ -14,8 +14,6 @@ export class Renderer {
         this.state = state;
         this.addProjectButton = document.querySelector('#projects-add');
         this.addProjectButton.addEventListener('click', () => this.#addNewProject());
-        this.addTodoButton = document.querySelector('#projects-todo-add');
-        this.addTodoButton.addEventListener('click', () => this.#addNewTodo());
         this.projectsElement = document.querySelector('#projects');
         this.projectTitleElement = document.querySelector('#project-title')
         this.projectDescriptionElement = document.querySelector('#project-description');
@@ -26,13 +24,19 @@ export class Renderer {
         removeAllChildren(this.projectsElement);
         for (const project of this.state.memory.projects) {
             const projectElement = document.createElement('div');
+            projectElement.classList.add('project');
             projectElement.addEventListener('click', () => this.#displayProject(project));
             this.projectsElement.appendChild(projectElement);
+            const projectColor = document.createElement('div');
+            projectColor.classList.add('project-color');
+            projectColor.style.background = project.color;
+            projectElement.appendChild(projectColor);
             const projectTitle = document.createElement('p');
             projectTitle.textContent = project.title;
             projectElement.appendChild(projectTitle);
             const deleteProjectButton = document.createElement('button');
             deleteProjectButton.textContent = 'Delete';
+            deleteProjectButton.classList.add('delete-button');
             deleteProjectButton.addEventListener('click', event => {
                 event.stopPropagation();
                 this.#deleteProject(project.id);
@@ -58,8 +62,12 @@ export class Renderer {
         this.projectTitleElement.textContent = project.title;
         this.projectDescriptionElement.textContent = project.description;
         removeAllChildren(this.todosElement);
+        const addTodoButton = document.createElement('button');
+        addTodoButton.textContent = 'Add Todo';
+        addTodoButton.addEventListener('click', () => this.#addNewTodo());
+        addTodoButton.setAttribute('id', 'add-todo-button');
+        this.todosElement.appendChild(addTodoButton);
         for (const todo of project.todos) {
-            console.log(todo);
             const todoElement = document.createElement('div');
             const checkBox = document.createElement('input');
             checkBox.setAttribute('type', 'checkbox');
@@ -72,16 +80,18 @@ export class Renderer {
             todoDescription.textContent = todo.description;
             todoElement.appendChild(todoDescription);
             const dueDate = document.createElement('div');
-            dueDate.textContent = todo.dueDate;
+            dueDate.textContent = todo.dueDate.toLocaleString();
             todoElement.appendChild(dueDate);
             const priority = document.createElement('div');
-            priority.textContent = todo.priority;
+            priority.textContent = 'Priority: ' + todo.priority;
             todoElement.appendChild(priority);
             checkBox.addEventListener('click', () => this.state.memory.toggleTodoDone(project.id, todo.id));
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('delete-button');
             deleteButton.addEventListener('click', () => this.#deleteTodo(todo.id));
             todoElement.appendChild(deleteButton);
+            todoElement.classList.add('todo');
             this.todosElement.appendChild(todoElement);
         }
     }
