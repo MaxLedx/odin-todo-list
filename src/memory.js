@@ -12,6 +12,17 @@ export class Memory {
         }
     }
 
+    toggleTodoDone(projectId, todoId) {
+        const project = this.projects.find(project => project.id === projectId);
+        if (project !== undefined) {
+            const todo = project.todos.find(todo => todo.id === todoId);
+            if (todo !== undefined) {
+                todo.done = !todo.done;
+                this.onWrite(this.projects);
+            }
+        }
+    }
+
     deleteTodo(projectId, todoId) {
         const project = this.projects.find(project => project.id === projectId);
         if (project !== undefined) {

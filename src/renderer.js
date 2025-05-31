@@ -15,6 +15,7 @@ export function renderProjects(memory) {
         projectElement.textContent = project.title;
 
         projectElement.addEventListener('click', () => {
+            removeAllChildren(todos);
             projectTitle.textContent = project.title;
             projectDescription.textContent = project.description;
             for (const todo of project.todos) {
@@ -35,6 +36,7 @@ export function renderProjects(memory) {
                 const priority = document.createElement('div');
                 priority.textContent = todo.priority;
                 todoElement.appendChild(priority);
+                checkBox.addEventListener('click', () => memory.toggleTodoDone(project.id, todo.id));
                 todos.appendChild(todoElement);
             }
         });
