@@ -8,26 +8,47 @@ export function renderProjects(memory) {
     const projectsList = document.querySelector('#projects');
     const projectTitle = document.querySelector('#project-title');
     const projectDescription = document.querySelector('#project-description');
+    const todos = document.querySelector('#project-todos-list');
     for (const project of memory.projects) {
         const projectElement = document.createElement('div');
 
         projectElement.textContent = project.title;
+
         projectElement.addEventListener('click', () => {
-            console.log('click')
             projectTitle.textContent = project.title;
             projectDescription.textContent = project.description;
+            for (const todo of project.todos) {
+                const todoElement = document.createElement('div');
+                const checkBox = document.createElement('input');
+                checkBox.setAttribute('type', 'checkbox');
+                checkBox.checked = todo.done;
+                todoElement.appendChild(checkBox);
+                const todoTitle = document.createElement('h2');
+                todoTitle.textContent = todo.title;
+                todoElement.appendChild(todoTitle);
+                const todoDescription = document.createElement('p');
+                todoDescription.textContent = todo.description;
+                todoElement.appendChild(todoDescription);
+                const dueDate = document.createElement('div');
+                dueDate.textContent = todo.dueDate;
+                todoElement.appendChild(dueDate);
+                const priority = document.createElement('div');
+                priority.textContent = todo.priority;
+                todoElement.appendChild(priority);
+                todos.appendChild(todoElement);
+            }
         });
-        // TODO: Setup on delete event listener
+
         const button = document.createElement('button');
         button.textContent = 'delete'
         button.addEventListener('click', event => {
             event.stopPropagation();
-            console.log('del');
             memory.deleteProject(project.id);
             removeAllChildren(projectsList);
-            // TODO: clear title, description and todos
+            projectTitle.textContent = '';
+            projectDescription.textContent = '';
+            removeAllChildren(todos);
             renderProjects(memory);
-
         });
 
         projectElement.appendChild(button);
