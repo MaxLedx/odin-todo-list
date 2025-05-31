@@ -6,6 +6,7 @@ import { Memory } from "./memory";
  */
 export function renderProjects(memory) {
     const projectsList = document.querySelector('#projects');
+    removeAllChildren(projectsList);
     const projectTitle = document.querySelector('#project-title');
     const projectDescription = document.querySelector('#project-description');
     const todos = document.querySelector('#project-todos-list');

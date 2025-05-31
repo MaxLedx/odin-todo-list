@@ -5,9 +5,23 @@ import { Todo } from "./todo";
 import { readFromLocalStorage, writeToLocalStorage } from "./localStorageService";
 import { Memory } from "./memory";
 import { renderProjects } from "./renderer";
+import { showNewProjectModal } from "./newProjectModal";
 
+localStorage.clear();
 const memory = initializeMemory();
 // Afficher les projets en mémoire dans la sidebar
+document.querySelector('#projects-add').addEventListener('click', () => {
+    showNewProjectModal((data) => {
+        const project = new Project({
+            title: data.title,
+            description: data.description,
+            color: data.color
+        });
+        console.log(project);
+        memory.addProject(project);
+        renderProjects(memory);
+    });
+});
 renderProjects(memory);
 console.log(memory);
 
