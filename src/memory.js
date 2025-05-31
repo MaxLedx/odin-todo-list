@@ -39,6 +39,10 @@ export class Memory {
         this.onWrite(this.projects);
     }
 
+    getProject(id) {
+        return this.projects.find(project => project.id === id);
+    }
+
     deleteProject(id) {
         this.projects = this.projects.filter(project => project.id !== id);
         this.onWrite(this.projects);

@@ -1,83 +1,120 @@
 import { DateTime } from "luxon";
-import { Memory } from "./memory";
 import { showNewTodoModal } from "./newTodoModal";
 import { Todo } from "./todo";
+import { State } from "./state";
+import { showNewProjectModal } from "./newProjectModal";
+import { Project } from "./project";
 
-/**
- * 
- * @param {Memory} memory 
- */
-export function renderProjects(memory) {
-    const projectsList = document.querySelector('#projects');
-    removeAllChildren(projectsList);
-    const projectTitle = document.querySelector('#project-title');
-    const projectDescription = document.querySelector('#project-description');
-    const todos = document.querySelector('#project-todos-list');
-    for (const project of memory.projects) {
-        console.log(project);
-        const projectElement = document.createElement('div');
+export class Renderer {
+    /**
+     * 
+     * @param {State} state 
+     */
+    constructor(state) {
+        this.state = state;
+        this.addProjectButton = document.querySelector('#projects-add');
+        this.addProjectButton.addEventListener('click', () => this.#addNewProject());
+        this.addTodoButton = document.querySelector('#projects-todo-add');
+        this.addTodoButton.addEventListener('click', () => this.#addNewTodo());
+        this.projectsElement = document.querySelector('#projects');
+        this.projectTitleElement = document.querySelector('#project-title')
+        this.projectDescriptionElement = document.querySelector('#project-description');
+        this.todosElement = document.querySelector('#project-todos-list');
+    }
 
-        projectElement.textContent = project.title;
-
-        projectElement.addEventListener('click', () => {
-            console.log('in setp')
-            removeAllChildren(todos);
+    renderProjects() {
+        removeAllChildren(this.projectsElement);
+        for (const project of this.state.memory.projects) {
+            const projectElement = document.createElement('div');
+            projectElement.addEventListener('click', () => this.#displayProject(project));
+            this.projectsElement.appendChild(projectElement);
+            const projectTitle = document.createElement('p');
             projectTitle.textContent = project.title;
-            projectDescription.textContent = project.description;
-            const addTodoButton = document.createElement('button');
-            addTodoButton.textContent = 'Add Todo';
-            addTodoButton.addEventListener('click', () => {
-                showNewTodoModal((data) => {
-                    const todo = new Todo({
-                        title: data.title,
-                        description: data.description,
-                        dueDate: DateTime.fromFormat(data.dueDate, 'yyyy-MM-dd'),
-                        priority: data.priority
-                    });
-                    memory.addTodo(project.id, todo);
-                    renderProjects(memory);
-                    projectElement.click();
-                });
+            projectElement.appendChild(projectTitle);
+            const deleteProjectButton = document.createElement('button');
+            deleteProjectButton.textContent = 'Delete';
+            deleteProjectButton.addEventListener('click', event => {
+                event.stopPropagation();
+                this.#deleteProject(project.id);
             });
-            todos.appendChild(addTodoButton);
-            for (const todo of project.todos) {
-                console.log(todo);
-                const todoElement = document.createElement('div');
-                const checkBox = document.createElement('input');
-                checkBox.setAttribute('type', 'checkbox');
-                checkBox.checked = todo.done;
-                todoElement.appendChild(checkBox);
-                const todoTitle = document.createElement('h2');
-                todoTitle.textContent = todo.title;
-                todoElement.appendChild(todoTitle);
-                const todoDescription = document.createElement('p');
-                todoDescription.textContent = todo.description;
-                todoElement.appendChild(todoDescription);
-                const dueDate = document.createElement('div');
-                dueDate.textContent = todo.dueDate;
-                todoElement.appendChild(dueDate);
-                const priority = document.createElement('div');
-                priority.textContent = todo.priority;
-                todoElement.appendChild(priority);
-                checkBox.addEventListener('click', () => memory.toggleTodoDone(project.id, todo.id));
-                todos.appendChild(todoElement);
-            }
-        });
+            projectElement.appendChild(deleteProjectButton);
+        }
+    }
 
-        const button = document.createElement('button');
-        button.textContent = 'delete'
-        button.addEventListener('click', event => {
-            event.stopPropagation();
-            memory.deleteProject(project.id);
-            removeAllChildren(projectsList);
-            projectTitle.textContent = '';
-            projectDescription.textContent = '';
-            removeAllChildren(todos);
-            renderProjects(memory);
+    #addNewProject() {
+        showNewProjectModal(data => {
+            const project = new Project({
+                title: data.title,
+                description: data.description,
+                color: data.color
+            });
+            this.state.memory.addProject(project);
+            this.renderProjects();
         });
+    }
 
-        projectElement.appendChild(button);
-        projectsList.appendChild(projectElement);
+    #displayProject(project) {
+        this.state.currentSelectedProject = project.id;
+        this.projectTitleElement.textContent = project.title;
+        this.projectDescriptionElement.textContent = project.description;
+        removeAllChildren(this.todosElement);
+        for (const todo of project.todos) {
+            console.log(todo);
+            const todoElement = document.createElement('div');
+            const checkBox = document.createElement('input');
+            checkBox.setAttribute('type', 'checkbox');
+            checkBox.checked = todo.done;
+            todoElement.appendChild(checkBox);
+            const todoTitle = document.createElement('h2');
+            todoTitle.textContent = todo.title;
+            todoElement.appendChild(todoTitle);
+            const todoDescription = document.createElement('p');
+            todoDescription.textContent = todo.description;
+            todoElement.appendChild(todoDescription);
+            const dueDate = document.createElement('div');
+            dueDate.textContent = todo.dueDate;
+            todoElement.appendChild(dueDate);
+            const priority = document.createElement('div');
+            priority.textContent = todo.priority;
+            todoElement.appendChild(priority);
+            checkBox.addEventListener('click', () => this.state.memory.toggleTodoDone(project.id, todo.id));
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => this.#deleteTodo(todo.id));
+            todoElement.appendChild(deleteButton);
+            this.todosElement.appendChild(todoElement);
+        }
+    }
+
+    #deleteProject(id) {
+        this.state.memory.deleteProject(id);
+        this.renderProjects();
+        if (this.state.currentSelectedProject === id) {
+            this.state.currentSelectedProject = null;
+            this.projectTitleElement.textContent = '';
+            this.projectDescriptionElement.textContent = '';
+            removeAllChildren(this.todosElement);
+        }
+    }
+
+    #addNewTodo() {
+        showNewTodoModal(data => {
+            const todo = new Todo({
+                title: data.title,
+                description: data.description,
+                dueDate: DateTime.fromFormat(data.dueDate, 'yyyy-MM-dd'),
+                priority: data.priority
+            });
+            this.state.memory.addTodo(this.state.currentSelectedProject, todo);
+            const project = this.state.memory.getProject(this.state.currentSelectedProject);
+            this.#displayProject(project);
+        });
+    }
+
+    #deleteTodo(id) {
+        this.state.memory.deleteTodo(this.state.currentSelectedProject, id);
+        const project = this.state.memory.getProject(this.state.currentSelectedProject);
+        this.#displayProject(project);
     }
 }
 
